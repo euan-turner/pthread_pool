@@ -155,6 +155,7 @@ void pool_destroy(struct thread_pool *pool, bool join) {
   /* Need a node destructor */
   free(pool->workers);
   pthread_mutex_destroy(&pool->queue_lock);
+  pthread_mutex_destroy(&pool->active_lock);
   pthread_cond_destroy(&pool->not_empty);
   pthread_cond_destroy(&pool->not_full);
   pthread_cond_destroy(&pool->all_completed);
@@ -170,11 +171,15 @@ void *worker(void *args) {
 }
 
 int pool_num_active(struct thread_pool *pool) {
-
+  /* TODO: Check if active needs a lock */
+  pthread_mutex_lock(&pool->active_lock);
+  int active = pool->num_active;
+  pthread_mutex_unlock(&pool->active_lock);
+  return active;
 }
 
 int  pool_num_inactive(struct thread_pool *pool) {
-
+  return pool->num_workers - pool_num_active(pool);
 }
 
 

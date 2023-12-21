@@ -1,3 +1,3 @@
 # pthread_pool
 
-A customisable thread pool for pthreads in C
+A simple thread pool for POSIX threads in C
